@@ -1,0 +1,12 @@
+{
+  "devDependencies": {
+    "@babel/core": "^7.1.6",
+    "@babel/preset-env": "^7.1.6",
+    "gulp-babel": "^8.0.0"
+  },
+  "scripts": {
+    "test": "echo \"Error : no test specifide\" && exit 1",
+    "dev" : "gulp dev",
+    "build" : "gulp build"
+  }
+}

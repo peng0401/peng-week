@@ -5,6 +5,9 @@ var server = require("gulp-webserver")
 var url = require("url")
 var path = require("path")
 var fs = require("fs")
+var swiper = require("./mock/swiper.json")
+var uglify = require("gulp-uglify")
+var babel = require("gulp-babel")
 gulp.task("devSass",() => {
     return gulp.src("./src/scss/*.scss")
     .pipe(sass())
@@ -26,10 +29,42 @@ gulp.task("devServer",() => {
                 res.end('')
                 return;
             }
-            pathname = pathname === '/' ? 'index.html' : pathname;
 
-            res.end(fs.readFileSync(path.join(__dirname, "src" , pathname)))
+            if(pathname === '/api/swiper') {
+                res.end(JSON.stringify({code : 1,data : swiper})) 
+            }else {
+               pathname = pathname === '/' ? 'index.html' : pathname;
+
+                res.end(fs.readFileSync(path.join(__dirname, "src" , pathname))) 
+            }
+            
         }
     }))
 })
 gulp.task('dev',gulp.series('devSass','devServer','watch'))
+
+gulp.task("bCss",() => {
+    return gulp.src("./src/css/*.css")
+    .pipe(gulp.dest('./build/css'))
+})
+
+gulp.task('Buglfy',() => {
+    return gulp.src('./src/js/*.js')
+    .pipe(babel({
+        presets : ['@babel/env']
+    }))
+    .pipe(uglify())
+    .pipe(gulp.dest('./build/js'))
+})
+
+gulp.task('bCopy',() => {
+    return gulp.src('./src/js/libs/*.js')
+    .pipe(gulp.dest('./build/js/libs'))
+})
+
+gulp.task('bHtml',() => {
+    return gulp.src('./src/*.html')
+    .pipe(gulp.dest('./build'))
+})
+
+gulp.task('build',gulp.parallel('bCss','Buglfy','bCopy','bHtml'))
